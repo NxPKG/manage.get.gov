@@ -1,0 +1,184 @@
+<!doctype html>{# keep this on the first line #}
+{% load i18n static %}
+{% load static url_helpers %}
+
+<html class="no-js" lang="{{ LANGUAGE_CODE }}">
+
+<head>
+  {% if IS_PRODUCTION %}
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-PZ5QSP6QPL"></script>
+  <script type="text/javascript" nonce="{{request.csp_nonce}}">
+    window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag('js', new Date()); gtag('config', 'G-PZ5QSP6QPL');
+  </script>
+  {% endif %}
+
+  <meta charset="utf-8">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <title>
+    {% block title %}{% endblock %}
+    .gov Registrar
+    {% block extra_title %}{% endblock %}
+  </title>
+  <meta name="description" content="{% block description %}{% endblock %}">
+  {% block viewport_meta %}
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  {% endblock %}
+  {% block extra_meta %}{% endblock extra_meta %}
+
+  <link rel="icon" type="image/png" sizes="32x32" 
+        href="{% static 'img/registrar/favicons/favicon-32.png' %}"
+  >
+  <link rel="icon" type="image/png" sizes="192x192" 
+        href="{% static 'img/registrar/favicons/favicon-192.png' %}"
+  >
+  <link rel="icon" type="image/svg+xml" 
+        href="{% static 'img/registrar/favicons/favicon.svg' %}"
+  >
+  <link rel="shortcut icon" type="image/x-icon"
+        href="{% static 'img/registrar/favicons/favicon.ico' %}"
+  >
+  <link rel="apple-touch-icon" size="180x180" 
+        href="{% static 'img/registrar/favicons/favicon-180.png' %}"
+  >
+
+  {% block css %}
+  <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+  <script src="{% static 'js/uswds-init.min.js' %}" defer></script>
+  <!-- We override with our own copy to make some classes accessible in our JS -->
+  <script src="{% static 'js/uswds-edited.js' %}" defer></script>
+  <script src="{% static 'js/get-gov.js' %}" defer></script>
+  {% endblock %}
+
+  {% block canonical %}
+  <link rel="canonical" href="{{ CANONICAL_PATH }}">
+  {% endblock %}
+
+
+  {% block feeds %}{% endblock %}
+  {% block extra_head %}{% endblock %}
+
+  {# hat tip to USWDS... #}
+  <!-- * * * * * ======================= -->
+  <!-- * * * * * ======================= -->
+  <!-- * * * * * ======================= -->
+  <!-- * * * * * ======================= -->
+  <!-- ================================= -->
+  <!-- ================================= -->
+  <!-- ================================= -->
+</head>
+
+<body id="{% block body_id %}default{% endblock %}" class="{% block body_class %}section_front{% endblock %}">
+  <a class="usa-skipnav" href="#main-content">Skip to main content</a>
+
+  {% if not IS_PRODUCTION %}
+    {% include "includes/non-production-alert.html" %}
+  {% endif %}
+
+  <section class="usa-banner" aria-label="Official website of the United States government">
+    <div class="usa-accordion">
+      <header class="usa-banner__header">
+        <div class="usa-banner__inner">
+          <div class="grid-col-auto">
+            <img class="usa-banner__header-flag" src="{% static 'img/us_flag_small.png' %}" alt="U.S. flag" />
+          </div>
+          <div class="grid-col-fill tablet:grid-col-auto" aria-hidden="true">
+            <p class="usa-banner__header-text">
+              An official website of the United States government
+            </p>
+            <p class="usa-banner__header-action">Here’s how you know</p>
+          </div>
+          <button class="usa-accordion__button usa-banner__button" aria-expanded="false"
+            aria-controls="gov-banner-default">
+            <span class="usa-banner__button-text">Here’s how you know</span>
+          </button>
+        </div>
+      </header>
+      <div class="usa-banner__content usa-accordion__content" id="gov-banner-default">
+        <div class="grid-row grid-gap-lg">
+          <div class="usa-banner__guidance tablet:grid-col-6">
+            <img class="usa-banner__icon usa-media-block__img" src="{% static 'img/icon-dot-gov.svg' %}" role="img"
+              alt="" aria-hidden="true" />
+            <div class="usa-media-block__body">
+              <p>
+                <strong>Official websites use .gov</strong><br />A
+                <strong>.gov</strong> website belongs to an official government
+                organization in the United States.
+              </p>
+            </div>
+          </div>
+          <div class="usa-banner__guidance tablet:grid-col-6">
+            <img class="usa-banner__icon usa-media-block__img" src="{% static 'img/icon-https.svg' %}" role="img" alt=""
+              aria-hidden="true" />
+            <div class="usa-media-block__body">
+              <p>
+                <strong>Secure .gov websites use HTTPS</strong><br />A
+                <strong>lock</strong> (
+                <span class="icon-lock"><svg xmlns="http://www.w3.org/2000/svg" width="52" height="64"
+                    viewBox="0 0 52 64" class="usa-banner__lock-image" role="img"
+                    aria-labelledby="banner-lock-description" focusable="false">
+                    <title id="banner-lock-title">Lock</title>
+                    <desc id="banner-lock-description">Locked padlock icon</desc>
+                    <path fill="#000000" fill-rule="evenodd"
+                      d="M26 0c10.493 0 19 8.507 19 19v9h3a4 4 0 0 1 4 4v28a4 4 0 0 1-4 4H4a4 4 0 0 1-4-4V32a4 4 0 0 1 4-4h3v-9C7 8.507 15.507 0 26 0zm0 8c-5.979 0-10.843 4.77-10.996 10.712L15 19v9h22v-9c0-6.075-4.925-11-11-11z" />
+                  </svg> </span>) or <strong>https://</strong> means you’ve safely connected to
+                the .gov website. Share sensitive information only on official,
+                secure websites.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <div class="usa-overlay"></div>
+  {% block header %}
+    {% include "includes/header_selector.html" with logo_clickable=True %}
+  {% endblock header %}
+
+  {% block wrapper %}
+  <div id="wrapper">
+    {% block messages %}
+    {% if messages %}
+    <ul class="messages">
+      {% for message in messages %}
+      {% if 'base' in message.extra_tags %}
+      <li{% if message.tags %} class="{{ message.tags }}" {% endif %}>
+        {{ message }}
+        </li>
+        {% endif %}
+        {% endfor %}
+    </ul>
+    {% endif %}
+    {% endblock %}
+
+    {% block section_nav %}{% endblock %}
+
+      {% block hero %}{% endblock %}
+      {% block content %}{% endblock %}
+
+    <div role="complementary">{% block complementary %}{% endblock %}</div>
+
+    {% block content_bottom %}{% endblock %}
+  </div>
+  {% endblock wrapper%}
+
+  {% block footer %}
+    {% include "includes/footer.html" with show_manage_your_domains=True %}
+  {% endblock footer %}
+  </div> <!-- /#wrapper -->
+
+  {% block init_js %}{% endblock %}{# useful for vars and other initializations #}
+
+  {% block site_js %}
+  {% endblock %}
+
+  {% block app_js %}{% endblock %}
+
+  {% block extrascript %}{% endblock %}
+
+</body>
+
+</html>

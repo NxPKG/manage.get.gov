@@ -1,0 +1,75 @@
+# test.yml
+name: Testing
+
+on:
+  push:
+    paths-ignore:
+      - 'docs/**'
+      - '**.md'
+      - '.gitignore'
+    branches:
+      - main
+  pull_request:
+    paths-ignore:
+      - 'docs/**'
+      - '**.md'
+      - '.gitignore'
+    branches:
+      - main
+
+jobs:
+  python-linting:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Linting
+        working-directory: ./src
+        # all of our linting is configured in
+        # registrar/management/commands/lint.py
+        run: docker compose run app python manage.py lint
+
+  python-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Unit tests
+        working-directory: ./src
+        run: docker compose run app python manage.py test --parallel
+
+  django-migrations-complete:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Check for complete migrations
+        working-directory: ./src
+        run:  |
+          docker compose run app ./manage.py makemigrations --dry-run --verbosity 3 && \
+          docker compose run app ./manage.py makemigrations --check
+
+  pa11y-scan:
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Disable Login
+        working-directory: ./src
+        # by adding MockUserLogin to settings.MIDDLEWARE
+        run: |
+          perl -pi \
+          -e 's/"django.contrib.auth.middleware.AuthenticationMiddleware",/$&"registrar.tests.common.MockUserLogin",/' \
+          registrar/config/settings.py
+
+      - name: Start container
+        working-directory: ./src
+        # leverage the docker compose setup that we already have for local development
+        run: docker compose up -d 
+
+      - name: run pa11y
+        working-directory: ./src
+        run: |
+          sleep 20;
+          npm i -g pa11y-ci
+          pa11y-ci 

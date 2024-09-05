@@ -1,0 +1,74 @@
+{% load i18n %}
+
+{% if app_list %}
+  {% for app in app_list %}
+    <div class="app-{{ app.app_label }} module{% if app.app_url in request.path|urlencode %} current-app{% endif %}">
+      <table>
+
+        {# .gov override: add headers #}
+        {% if show_changelinks %}
+          <colgroup span="3"></colgroup>
+        {% else %}
+          <colgroup span="2"></colgroup>
+        {% endif %}
+        <thead>
+          <tr>
+            {% if show_changelinks %}
+              <th colspan="3" class="primary-th" scope="colgroup">
+                {{ app.name }}
+              </th>
+            {% else %}
+              <th colspan="2" class="primary-th" scope="colgroup">
+                {{ app.name }}
+              </th>
+            {% endif %}
+          </tr>
+          <tr>
+            <th scope="col">Model</th>
+            <th scope="col"><span class="display-inline-block min-width-25">Add</span></th>
+            {% if show_changelinks %}
+                <th scope="col">
+                  <span class="display-inline-block min-width-81">
+                    {% translate 'View/Change' %}</th>
+                  </span>
+            {% endif %}
+          </tr>
+        </thead>
+        {# end .gov override #}
+
+        {% for model in app.models %}
+          <tr class="model-{{ model.object_name|lower }}{% if model.admin_url in request.path|urlencode %} current-model{% endif %}">
+            {% if model.admin_url %}
+              <th scope="row"><a href="{{ model.admin_url }}"{% if model.admin_url in request.path|urlencode %} aria-current="page"{% endif %}>{{ model.name }}</a></th>
+            {% else %}
+              <th scope="row">{{ model.name }}</th>
+            {% endif %}
+
+            {% if model.add_url %}
+              <td><a href="{{ model.add_url }}" class="addlink">{% translate 'Add' %}</a></td>
+            {% else %}
+              <td></td>
+            {% endif %}
+
+            {% if model.admin_url and show_changelinks %}
+              {% if model.view_only %}
+                <td><a href="{{ model.admin_url }}" class="viewlink">{% translate 'View' %}</a></td>
+              {% else %}
+                <td><a href="{{ model.admin_url }}" class="changelink">{% translate 'Change' %}</a></td>
+              {% endif %}
+            {% elif show_changelinks %}
+              <td></td>
+            {% endif %}
+          </tr>
+        {% endfor %}
+      </table>
+    </div>
+  {% endfor %}
+  <div class="module module--custom">
+    <h2>Analytics</h2>
+    <a class="display-block padding-y-1 padding-x-1" href="{% url 'analytics' %}">Dashboard</a>
+  </div>
+{% else %}
+  <p>{% translate 'You don’t have permission to view or edit anything.' %}</p>
+{% endif %}
+

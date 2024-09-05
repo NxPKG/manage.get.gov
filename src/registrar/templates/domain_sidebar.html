@@ -1,0 +1,93 @@
+{% load static url_helpers %}
+
+<div class="margin-bottom-4 tablet:margin-bottom-0">
+  <nav aria-label="Domain sections">
+    <ul class="usa-sidenav">
+
+      {% with url_name="domain" %}
+        {% include "includes/domain_sidenav_item.html" with item_text="Domain overview" %}
+      {% endwith %}
+
+      {% if is_editable %}
+
+      {% if not portfolio %}
+        {% with url_name="domain-org-name-address" %}
+          {% include "includes/domain_sidenav_item.html" with item_text="Organization name and mailing address" %}
+        {% endwith %}
+      {% endif %}    
+
+      <li class="usa-sidenav__item">
+        {% url 'domain-dns' pk=domain.id as url %}
+        <a href="{{ url }}" {% if request.path|startswith:url %}class="usa-current"{% endif %}>
+          DNS
+        </a>
+        {% if request.path|startswith:url %}
+        <ul class="usa-sidenav__sublist">
+          <li class="usa-sidenav__item">
+            {% url 'domain-dns-nameservers' pk=domain.id as url %} 
+            <a href="{{ url }}"
+              {% if request.path == url %}class="usa-current"{% endif %}
+            >
+                Name servers
+            </a>
+          </li>
+
+          <li class="usa-sidenav__item">
+            {% url 'domain-dns-dnssec' pk=domain.id as url %}
+            <a href="{{ url }}"
+              {% if request.path|startswith:url %}class="usa-current"{% endif %}
+            >
+                DNSSEC
+            </a>
+            {% if request.path|startswith:url %}
+              {% if domain.dnssecdata is not None or request.path|startswith:url and request.path|endswith:'dsdata' %}
+              <ul class="usa-sidenav__sublist">
+                <li class="usa-sidenav__item">
+                  {% url 'domain-dns-dnssec-dsdata' pk=domain.id as url %}
+                  <a href="{{ url }}"
+                    {% if request.path == url %}class="usa-current"{% endif %}
+                  >
+                      DS data
+                  </a>
+                </li>
+              </ul>
+              {% endif %}
+            {% endif %}
+          </li>
+        </ul>
+        {% endif %}
+      </li>
+
+      
+      {% if portfolio %}
+          {% comment %} Only show this menu option if the user has the perms to do so {% endcomment %}
+          {% if has_domains_portfolio_permission and has_view_suborganization %}
+            {% with url_name="domain-suborganization" %}
+              {% include "includes/domain_sidenav_item.html" with item_text="Suborganization" %}
+            {% endwith %}
+          {% endif %}
+      {% else %}
+        {% with url_name="domain-senior-official" %}
+          {% include "includes/domain_sidenav_item.html" with item_text="Senior official" %}
+        {% endwith %}
+      {% endif %}
+
+      {% if not has_profile_feature_flag %}
+      {# Conditionally display profile link in main nav #}
+        {% with url_name="domain-your-contact-information" %}
+          {% include "includes/domain_sidenav_item.html" with item_text="Your contact information" %}
+        {% endwith %}
+      {% endif %}
+
+      {% with url_name="domain-security-email" %}
+        {% include "includes/domain_sidenav_item.html" with item_text="Security email" %}
+      {% endwith %}
+
+      {% with url_name="domain-users" %}
+        {% include "includes/domain_sidenav_item.html" with item_text="Domain managers" %}
+      {% endwith %}
+
+      {% endif %}
+    </ul>
+  </nav>
+</div>

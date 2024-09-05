@@ -1,0 +1,49 @@
+{% extends "admin/change_list.html" %}
+
+{% block content_title %}
+    <h1>{{ title }}</h1>
+
+    {# Adds a model description #}
+    {% include "admin/model_descriptions.html" %}
+
+    <h2>
+        {{ cl.result_count }} 
+        {% if cl.get_ordering_field_columns %}
+            sorted
+        {% endif %}
+        {% if cl.result_count == 1 %}
+            result
+        {% else %}
+            results
+        {% endif %}
+        {% if filters %}
+            filtered by
+                {% for filter_param in filters %}
+                    {% if filter_param.parameter_name == 'is_election_board' %}
+                        {%if filter_param.parameter_value == '0' %}
+                            election office = No
+                        {% else %}
+                            election office = Yes
+                        {% endif %}
+                    {% elif filter_param.parameter_name == 'status__in' %}
+                        status in [{{ filter_param.parameter_value }}]
+                    {% else %}
+                        {{ filter_param.parameter_name }} = {{ filter_param.parameter_value }}
+                    {% endif %}
+                    {% if not forloop.last %}, {% endif %}
+                {% endfor %}
+        {% endif %}
+        {% if search_query  %}
+            for {{ search_query }}
+        {% endif %}
+    </h2>    
+{% endblock %}
+
+{% comment %} Replace the Django ul markup with a div. We'll replace the li with a p in change_list_object_tools {% endcomment %}
+{% block object-tools %}
+    <div class="object-tools">
+        {% block object-tools-items %}
+            {{ block.super }}
+        {% endblock %}
+    </div>
+{% endblock %}

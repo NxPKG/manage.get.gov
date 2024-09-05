@@ -1,0 +1,64 @@
+{% autoescape off %}{# In a text file, we don't want to have HTML entities escaped #}
+Hello from .gov.
+
+Our new domain management system—the .gov registrar—is now available. The organization, contacts, and DNS information for your .gov domain{% if domains|length > 1 %}s{% endif %} have been transferred to our new registrar. 
+
+Your .gov domain{% if domains|length > 1 %}s{% endif %}:
+{% for domain in domains %} - {{ domain }}
+{% endfor %}
+If you’re not affiliated with the above domain{% if domains|length > 1 %}s{% endif %} or think you received this message in error, let us know in a reply to this email. 
+
+
+CREATE A LOGIN.GOV ACCOUNT
+
+You can’t use your old credentials to access the new registrar. Access is now managed through Login.gov, a simple and secure process for signing in to many government services with one account.
+
+When creating a Login.gov account, you’ll need to provide the same email address you used to sign in to the old registrar. That will link your domain{% if domains|length > 1 %}s{% endif %} to your account.
+
+If you need help finding the email address you used in the past, let us know in a reply to this email.
+
+YOU MUST VERIFY YOUR IDENTITY WITH LOGIN.GOV
+
+We require you to verify your identity with Login.gov as part of the account creation process. This is an extra layer of security that requires you to prove you are you, and not someone pretending to be you.
+
+When you try to access the registrar with your Login.gov account, we’ll ask you to verify your identity if you haven’t already. You’ll only have to verify your identity once. You’ll need a state-issued ID, a Social Security number, and a phone number for identity verification.
+
+Follow these steps to create your Login.gov account <https://login.gov/help/get-started/create-your-account/>. 
+
+Read more about verifying your identity with Login.gov <https://login.gov/help/verify-your-identity/how-to-verify-your-identity/>. 
+
+CHECK YOUR .GOV DOMAIN CONTACTS
+
+This is a good time to check who has access to your .gov domain{% if domains|length > 1 %}s{% endif %}. The admin, technical, and billing contacts listed for your domain{% if domains|length > 1 %}s{% endif %} in our old system also received this email. In our new registrar, these contacts are all considered “domain managers.” We no longer have the admin, technical, and billing roles, and you aren’t limited to three domain managers like in the old system. 
+
+    1. Once you have your Login.gov account, sign in to the new registrar at <https://manage.get.gov>.
+    2. Click the “Manage” link next to your .gov domain, then click on “Domain managers” to see who has access to your domain. 
+    3. If any of these users should not have access to your domain, let us know in a reply to this email.
+
+After verifying who has access to your domain{% if domains|length > 1 %}s{% endif %}, review your contact information to make sure it's up to date.
+
+
+DOMAIN EXPIRATION DATES EXTENDED BY ONE YEAR
+
+Expiration dates for .gov domains in good standing have been extended for one year. Expiration dates won't be shown in the new registrar yet. 
+
+
+SOMETHING WRONG?
+
+If you think you received this message in error or have a question, let us know in a reply to this email. 
+
+
+THANK YOU
+
+.Gov helps the public identify official, trusted information. Thank you for using a .gov domain.
+
+----------------------------------------------------------------
+
+The .gov team
+
+.Gov blog <https://get.gov/updates/> 
+Domain management <https://manage.get.gov>
+Get.gov <https://get.gov>
+
+The .gov registry is a part of the Cybersecurity and Infrastructure Security Agency (CISA) <https://cisa.gov/>
+{% endautoescape %}

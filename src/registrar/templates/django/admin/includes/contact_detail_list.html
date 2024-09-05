@@ -1,0 +1,49 @@
+{% load i18n static %}
+{% load custom_filters %}
+
+<address class="{% if no_title_top_padding %}margin-top-neg-1__detail-list{% endif %} {% if user|has_contact_info %}margin-bottom-1{% endif %} dja-address-contact-list">
+
+
+    {% if show_formatted_name %}
+        {% if user.get_formatted_name %}
+            <a id="contact_info_name" href="{% url 'admin:registrar_contact_change' user.id %}">{{ user.get_formatted_name }}</a>
+        {% else %}
+            None
+        {% endif %}
+        </br>
+    {% endif %}
+
+    {% if user|has_contact_info %}
+        {# Title #}
+        {% if user.title %}
+            <span id="contact_info_title">{{ user.title }}</span>
+        {% else %}
+            None
+        {% endif %}
+         </br>
+
+        {# Email #}
+        {% if user.email %}
+            <span id="contact_info_email">{{ user.email }}</span>
+            {% include "admin/input_with_clipboard.html" with field=user invisible_input_field=True %}
+            <br class="admin-icon-group__br">
+        {% else %}
+            None<br>
+        {% endif %}
+
+        {# Phone #}
+        {% if user.phone %}
+            <span id="contact_info_phone">{{ user.phone }}</span>
+            <br>
+        {% else %}
+            None<br>
+        {% endif %}
+
+    {% else %}
+        No additional contact information found.<br>
+    {% endif %}
+
+    {% if user_verification_type and not skip_additional_contact_info %}
+        <span id="contact_info_phone">{{ user_verification_type }}</span>
+    {% endif %}
+</address>

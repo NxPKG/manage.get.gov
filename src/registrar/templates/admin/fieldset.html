@@ -1,0 +1,79 @@
+{% load i18n static %}
+
+{% comment %}
+This is copied from Djangos implementation of this template, with added "blocks"
+It is not inherently customizable on its own, so we can modify this instead.
+https://github.com/django/django/blob/main/django/contrib/admin/templates/admin/includes/fieldset.html
+{% endcomment %}
+<fieldset class="module aligned {{ fieldset.classes }}">
+    {% if fieldset.name %}
+        {# Customize the markup for the collapse toggle #}
+        {% if 'collapse--dgfieldset' in fieldset.classes %}
+            <button type="button">
+                <span>{{ fieldset.name }}</span>
+                <svg class="usa-icon" aria-hidden="true" focusable="false" role="img" width="24" height="24">
+                    <use xlink:href="{%static 'img/sprite.svg'%}#expand_more"></use>
+                </svg>
+            </button>
+            <legend class="sr-only">{{ fieldset.description }}</legend>
+        {% else %}
+            <h2>{{ fieldset.name }}</h2>
+        {% endif %}
+    {% endif %}
+
+    {# Customize the markup for the collapse toggle: Do not show a description for the collapse fieldsets, instead we're using the description as a screen reader only legend #}
+    {% if fieldset.description and 'collapse--dgfieldset' not in fieldset.classes %}
+        <div class="description">{{ fieldset.description|safe }}</div>
+    {% endif %}
+
+    {% for line in fieldset %}
+        <div class="form-row{% if line.fields|length == 1 and line.errors %} errors{% endif %}{% if not line.has_visible_field %} hidden{% endif %}{% for field in line %}{% if field.field.name %} field-{{ field.field.name }}{% endif %}{% endfor %}">
+            {% if line.fields|length == 1 %}{{ line.errors }}{% else %}<div class="flex-container form-multiline">{% endif %}
+            {% for field in line %}
+                <div>
+                    {% if not line.fields|length == 1 and not field.is_readonly %}{{ field.errors }}{% endif %}
+                        {% block flex_container_start %}
+                        <div class="flex-container{% if not line.fields|length == 1 %} fieldBox{% if field.field.name %} field-{{ field.field.name }}{% endif %}{% if not field.is_readonly and field.errors %} errors{% endif %}{% if field.field.is_hidden %} hidden{% endif %}{% elif field.is_checkbox %} checkbox-row{% endif %}">
+                        {% endblock flex_container_start %}
+                            {% if field.is_checkbox %}
+                                {# .gov override #}
+                                {% block field_checkbox %}
+                                {{ field.field }}{{ field.label_tag }}
+                                {% endblock field_checkbox%}
+                            {% else %}
+                                {{ field.label_tag }}
+                                {% if field.is_readonly %}
+                                    {# .gov override #}
+                                    {% block field_readonly %}
+                                    <div class="readonly">{{ field.contents }}</div>
+                                    {% endblock field_readonly%}
+                                {% else %}
+                                    {# .gov override #}
+                                    {% block field_other %}
+                                    {{ field.field }}
+                                    {% endblock field_other%}
+                                {% endif %}
+                            {% endif %}
+                        {% block flex_container_end %}
+                        </div>
+                        {% endblock flex_container_end %}
+
+                    {% if field.field.help_text %}
+                        {# .gov override #}
+                        {% block help_text %}
+                        <div class="help"{% if field.field.id_for_label %} id="{{ field.field.id_for_label }}_helptext"{% endif %}>
+                            <div>{{ field.field.help_text|safe }}</div>
+                        </div>
+                        {% endblock help_text %}
+                    {% endif %}
+                    
+                    {# .gov addition #}
+                    {% block after_help_text %}
+                        {# For templating purposes #}
+                    {% endblock after_help_text %}
+                </div>
+            {% endfor %}
+            {% if not line.fields|length == 1 %}</div>{% endif %}
+        </div>
+    {% endfor %}
+</fieldset>

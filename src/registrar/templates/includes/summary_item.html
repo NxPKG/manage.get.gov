@@ -1,0 +1,125 @@
+{% load static url_helpers %}
+
+<section class="summary-item margin-top-3">
+  <hr class="" aria-hidden="true" />
+  <div class="display-flex flex-justify">
+    <div>
+    {% if heading_level %}
+      <{{ heading_level }}
+    {% else %} 
+      <h3
+    {% endif %} 
+      class="summary-item__title
+             font-sans-md
+             text-primary-dark text-semibold
+             margin-top-0 margin-bottom-05
+             padding-right-1"
+      >
+        {{ title }}
+    {% if heading_level %}
+      </{{ heading_level }}>
+    {% else %} 
+      </h3>
+    {% endif %}
+      {% if sub_header_text %}
+        <h4 class="register-form-review-header">{{ sub_header_text }}</h4>
+      {% endif %}
+      {% if address %}
+        {% include "includes/organization_address.html" with organization=value %}
+      {% elif contact %}
+        {% if list %}
+          {% if value|length == 1 %}
+            {% include "includes/contact.html" with contact=value|first %}
+          {% else %}
+            {% if value %}
+              <dl class="usa-list usa-list--unstyled margin-top-0">
+                {% for item in value %}
+                  <dt>
+                    Contact {{forloop.counter}}
+                  </dt>
+                  <dd>
+                    {% include "includes/contact.html" with contact=item %}
+                  </dd>
+                {% endfor %}
+                </dl>
+            {% elif custom_text_for_value_none %}
+              <p>
+                {{ custom_text_for_value_none }}
+              </p>
+            {% else %}
+              <p>
+                  None
+              </p>
+            {% endif %}
+          {% endif %}
+        {% else %}
+          {% include "includes/contact.html" with contact=value %}
+        {% endif %}
+      {% elif list %}
+        {% if value|length == 1 %}
+            {% if users %}
+              <p class="margin-top-0">{{ value.0.user.email }} </p>
+            {% elif domains %}
+              {{ value.0.0 }}
+              {% if value.0.1 %}
+                ({% spaceless %}
+                {% for addr in value.0.1 %}
+                  {{addr}}{% if not forloop.last %}, {% endif %}
+                {% endfor %}
+                {% endspaceless %})
+              {% endif %}
+            {% else %}
+              <p class="margin-top-0 margin-bottom-0">{{ value | first }} </p>
+            {% endif %}
+        {% else %}
+          <ul class="usa-list usa-list--unstyled margin-top-0">
+            {% for item in value %}
+            {% if users %}
+              <li>{{ item.user.email }}</li>
+            {% elif domains %}
+              <li>
+                {{ item.0 }}
+                {% if item.1 %}
+                  ({% spaceless %}
+                  {% for addr in item.1 %}
+                    {{addr}}{% if not forloop.last %}, {% endif %}
+                  {% endfor %}
+                  {% endspaceless %})
+                {% endif %}
+              </li>
+            {% else %}
+              <li>{{ item }}</li>
+            {% endif %}
+            {% empty %}
+             <li>None</li>
+            {% endfor %}
+          </ul>
+        {% endif %}
+      {% else %}
+      <p class="margin-top-0 margin-bottom-0">
+        {% if value %}
+          {{ value }}
+        {% elif custom_text_for_value_none %}
+          {{ custom_text_for_value_none }}
+        {% else %}
+          None
+        {% endif %}
+      </p>
+      {% endif %}
+    </div>
+
+    {% if editable and edit_link %}
+      <div class="text-right">
+      <a
+          href="{{ edit_link }}"
+          class="usa-link usa-link--icon font-sans-sm line-height-sans-5"
+      >
+        <svg class="usa-icon" aria-hidden="true" focusable="false" role="img" width="24">
+          <use xlink:href="{% static 'img/sprite.svg' %}#edit"></use>
+        </svg>
+        Edit<span class="sr-only"> {{ title }}</span>
+      </a>
+      </div>
+    {% endif %}
+ </div>
+</section>

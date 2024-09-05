@@ -1,0 +1,120 @@
+{% extends "domain_base.html" %}
+{% load static field_helpers url_helpers %}
+
+{% block title %}DS data | {{ domain.name }} | {% endblock %}
+
+{% block domain_content %}
+  {% if domain.dnssecdata is None %}
+  <div class="usa-alert usa-alert--info usa-alert--slim margin-bottom-3">
+    <div class="usa-alert__body">
+      You have no DS data added. Enable DNSSEC by adding DS data.
+    </div>
+  </div>
+  {% endif %}
+
+  {% for form in formset %}
+    {% include "includes/form_errors.html" with form=form %}
+  {% endfor %}
+
+  <h1>DS data</h1>
+
+  <p>In order to enable DNSSEC, you must first configure it with your DNS hosting service.</p>
+
+  <p>Enter the values given by your DNS provider for DS data.</p>
+
+  {% include "includes/required_fields.html" %}
+
+  <form class="usa-form usa-form--extra-large ds-data-form" method="post" novalidate id="form-container">
+    {% csrf_token %}
+    {{ formset.management_form }}
+
+    {% for form in formset %}
+    <fieldset class="repeatable-form">
+
+      <legend class="sr-only">DS data record {{forloop.counter}}</legend>
+
+      <h2 class="margin-top-0">DS data record {{forloop.counter}}</h2>
+
+      <div class="grid-row grid-gap-2 flex-end">
+        <div class="tablet:grid-col-4">
+          {% with attr_required=True add_group_class="usa-form-group--unstyled-error" %}
+            {% input_with_errors form.key_tag %}
+          {% endwith %}
+        </div>
+        <div class="tablet:grid-col-4">
+          {% with attr_required=True add_group_class="usa-form-group--unstyled-error" %}
+            {% input_with_errors form.algorithm %}
+          {% endwith %}
+        </div>
+        <div class="tablet:grid-col-4">
+          {% with attr_required=True add_group_class="usa-form-group--unstyled-error" %}
+            {% input_with_errors form.digest_type %}
+          {% endwith %}
+        </div>
+      </div>
+
+      <div class="grid-row">
+        <div class="grid-col">
+          {% with attr_required=True add_group_class="usa-form-group--unstyled-error" %}
+            {% input_with_errors form.digest %}
+          {% endwith %}
+        </div>
+      </div>
+
+      <div class="grid-row margin-top-1">
+        <div class="grid-col">
+          <button type="button" class="usa-button usa-button--unstyled usa-button--with-icon float-right-tablet delete-record">
+            <svg class="usa-icon" aria-hidden="true" focusable="false" role="img" width="24" height="24">
+              <use xlink:href="{%static 'img/sprite.svg'%}#delete"></use>
+            </svg>Delete
+          </button>
+        </div>
+      </div>
+
+    </fieldset>
+    {% endfor %}
+
+    <button type="button" class="usa-button usa-button--unstyled usa-button--with-icon margin-bottom-2" id="add-form">
+      <svg class="usa-icon" aria-hidden="true" focusable="false" role="img" width="24" height="24">
+        <use xlink:href="{%static 'img/sprite.svg'%}#add_circle"></use>
+      </svg>Add new record
+    </button>
+
+    <button
+          id="save-ds-data"
+          type="submit"
+          class="usa-button"
+      >Save
+    </button>
+
+    <button
+          type="submit"
+          class="usa-button usa-button--outline"
+          name="btn-cancel-click"
+          aria-label="Reset the data in the DS records to the registry state (undo changes)"
+      >Cancel
+    </button>
+  </form>
+
+  {% if trigger_modal %}
+  <a
+      id="ds-toggle-dnssec-alert"
+      href="#toggle-dnssec-alert"
+      class="usa-button usa-button--outline margin-top-1 display-none"
+      aria-controls="toggle-dnssec-alert"
+      data-open-modal
+      >Trigger Disable DNSSEC Modal</a
+    >
+  {% endif %}
+  {# Use data-force-action to take esc out of the equation and pass cancel_button_resets_ds_form to effectuate a reset in the view #}
+  <div
+    class="usa-modal"
+    id="toggle-dnssec-alert"
+    aria-labelledby="Are you sure you want to continue?"
+    aria-describedby="Your DNSSEC records will be deleted from the registry."
+    data-force-action
+  >
+      {% include 'includes/modal.html' with cancel_button_resets_ds_form=True modal_heading="Warning: You are about to remove all DS records on your domain." modal_description="To fully disable DNSSEC: In addition to removing your DS records here, you’ll need to delete the DS records at your DNS host. To avoid causing your domain to appear offline, you should wait to delete your DS records at your DNS host until the Time to Live (TTL) expires. This is often less than 24 hours, but confirm with your provider." modal_button=modal_button|safe %}
+  </div>
+
+{% endblock %}  {# domain_content #}

@@ -1,0 +1,95 @@
+{% extends "admin/base.html" %}
+{% load static %}
+{% load i18n %}
+
+{% block extrahead %}
+  <link rel="icon" type="image/png" sizes="32x32" 
+  href="{% static 'img/registrar/favicons/favicon-32.png' %}"
+  >
+  <link rel="icon" type="image/png" sizes="192x192" 
+  href="{% static 'img/registrar/favicons/favicon-192.png' %}"
+  >
+  <link rel="icon" type="image/svg+xml" 
+  href="{% static 'img/registrar/favicons/favicon.svg' %}"
+  >
+  <link rel="shortcut icon" type="image/x-icon"
+  href="{% static 'img/registrar/favicons/favicon.ico' %}"
+  >
+  <link rel="apple-touch-icon" size="180x180" 
+  href="{% static 'img/registrar/favicons/favicon-180.png' %}"
+  >
+  <script src="{% static 'js/uswds-init.min.js' %}" defer></script>
+  <script src="{% static 'js/uswds.min.js' %}" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script type="application/javascript" src="{% static 'js/get-gov-admin.js' %}" defer></script>
+  <script type="application/javascript" src="{% static 'js/get-gov-reports.js' %}" defer></script>
+  <script type="application/javascript" src="{% static 'js/dja-collapse.js' %}" defer></script>
+{% endblock %}
+
+{% block title %}
+    {% if subtitle %}
+        {{ subtitle }} | 
+    {% endif %}
+    {% if tabtitle %}
+        {{ tabtitle }} |
+    {% else %}
+        {{ title }} |
+    {% endif %}
+    {{ site_title|default:_('Django site admin') }}
+{% endblock %}
+
+{% block extrastyle %}{{ block.super }}
+<link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}" />
+{% endblock %}        
+
+{% block header %}
+  {% if not IS_PRODUCTION %}
+    {% with add_body_class="margin-left-1" %}
+      {% include "includes/non-production-alert.html" %}
+    {% endwith %}
+  {% endif %}
+
+  {# Djando update: this div will change to header #}
+  <div id="header">
+    <div id="branding">
+      {% block branding %}
+        <h1 id="site-name"><a href="{% url 'admin:index' %}">.gov admin</a></h1>
+        {% if user.is_anonymous %}
+          {% include "admin/color_theme_toggle.html" %}
+        {% endif %}
+      {% endblock %}
+    </div>
+    {% block usertools %}
+    {% if has_permission %}
+    <div id="user-tools">
+        {% block welcome-msg %}
+            {% translate 'Welcome,' %}
+            <strong>{% firstof user.get_short_name user.get_username %}</strong>.
+        {% endblock %}
+        {% comment %}
+          This was copied from the 'userlinks' template, with a few minor changes.
+          You can find that here:
+          https://github.com/django/django/blob/d25f3892114466d689fd6936f79f3bd9a9acc30e/django/contrib/admin/templates/admin/base.html#L59
+        {% endcomment %}
+        {% block userlinks %}
+          {% if site_url %}
+              <a href="{{ site_url }}">{% translate 'View site' %}</a> /
+          {% endif %}
+          {% if user.is_active and user.is_staff %}
+              {% url 'django-admindocs-docroot' as docsroot %}
+              {% if docsroot %}
+                  <a href="{{ docsroot }}">{% translate 'Documentation' %}</a> /
+              {% endif %}
+          {% endif %}
+          {% if user.has_usable_password %}
+              <a href="{% url 'admin:password_change' %}">{% translate 'Change password' %}</a> /
+          {% endif %}
+              <a href="{% url 'admin:logout' %}" id="admin-logout-button">{% translate 'Log out' %}</a>
+          {% include "admin/color_theme_toggle.html" %}
+        {% endblock %}
+    </div>
+    {% endif %}
+    {% endblock %}
+    {% block nav-global %}{% endblock %}
+  </div>
+{% endblock %}

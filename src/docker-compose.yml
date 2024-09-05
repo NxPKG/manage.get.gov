@@ -1,0 +1,115 @@
+services:
+  app:
+    build: .
+    depends_on:
+      - db
+    volumes:
+      - .:/app
+    links:
+      - db
+    working_dir: /app
+    entrypoint: python /app/docker_entrypoint.py
+    deploy:
+      restart_policy:
+        condition: on-failure
+        max_attempts: 5
+    environment:
+      # Send stdout and stderr straight to the terminal without buffering
+      - PYTHONUNBUFFERED=yup
+      # How to connect to Postgre container
+      - DATABASE_URL=postgres://user:feedabee@db/app
+      # Tell Django where to find its configuration
+      - DJANGO_SETTINGS_MODULE=registrar.config.settings
+      # Set a local key for Django
+      - DJANGO_SECRET_KEY=really-long-random-string-BNPecI7+s8jMahQcGHZ3XQ5yUfRrSibdapVLIz0UemdktVPofDKcoy
+      # Run Django in debug mode on local
+      - DJANGO_DEBUG=True
+      # Set DJANGO_LOG_LEVEL in env
+      - DJANGO_LOG_LEVEL
+      # Run Django without production flags
+      - IS_PRODUCTION=False
+      # Tell Django where it is being hosted
+      - DJANGO_BASE_URL=http://localhost:8080
+      # Is this a production environment
+      - IS_PRODUCTION
+      # Public site URL link
+      - GETGOV_PUBLIC_SITE_URL=https://get.gov
+      # Set a username for accessing the registry
+      - REGISTRY_CL_ID=nothing
+      # Set a password for accessing the registry
+      - REGISTRY_PASSWORD=nothing
+      # Set a private certifcate for accessing the registry
+      - REGISTRY_CERT=LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUNMekNDQWRXZ0F3SUJBZ0lVWThXWEljcFVlVUk0TVUrU3NWbkIrOGErOUlnd0NnWUlLb1pJemowRUF3SXcKYlRFTE1Ba0dBMVVFQmhNQ1ZWTXhDekFKQmdOVkJBZ01Ba1JETVJNd0VRWURWUVFIREFwWFlYTm9hVzVuZEc5dQpNUXd3Q2dZRFZRUUtEQU5IVTBFeEREQUtCZ05WQkFzTUF6RTRSakVnTUI0R0ExVUVBd3dYUjA5V0lGQnliM1J2CmRIbHdaU0JTWldkcGMzUnlZWEl3SGhjTk1qTXdOREl4TVRVMU5ETTFXaGNOTWpRd05ESXdNVFUxTkRNMVdqQnQKTVFzd0NRWURWUVFHRXdKVlV6RUxNQWtHQTFVRUNBd0NSRU14RXpBUkJnTlZCQWNNQ2xkaGMyaHBibWQwYjI0eApEREFLQmdOVkJBb01BMGRUUVRFTU1Bb0dBMVVFQ3d3RE1UaEdNU0F3SGdZRFZRUUREQmRIVDFZZ1VISnZkRzkwCmVYQmxJRkpsWjJsemRISmhjakJaTUJNR0J5cUdTTTQ5QWdFR0NDcUdTTTQ5QXdFSEEwSUFCRkN4bGVsN1ZoWHkKb1ZIRWY2N3FKamo5UDk0ZWdqdXNtSWVaNFRLYkxkM3RRRVgzZnFKdVk4WmZzWWN4N0s1K0NEdnJLMnZRdjlMYgpmamhMTjZad3FqK2pVekJSTUIwR0ExVWREZ1FXQkJRUEZCRHdnSlhOUXE4a1V0K1hyYzFFWm9wbW9UQWZCZ05WCkhTTUVHREFXZ0JRUEZCRHdnSlhOUXE4a1V0K1hyYzFFWm9wbW9UQVBCZ05WSFJNQkFmOEVCVEFEQVFIL01Bb0cKQ0NxR1NNNDlCQU1DQTBnQU1FVUNJRVJEaml0VGR0UTB3eVNXb1hEbCtYbUpVUmdENUo0VHVudkFGeDlDSitCUwpBaUVBME42eTJoeGdFWkYxRXJGYW1VQW5EUHlQSFlJeFNJQkwwNW5ibE9IZFVLRT0KLS0tLS1FTkQgQ0VSVElGSUNBVEUtLS0tLQo=
+      # Set a private certifcate's key for accessing the registry
+      - REGISTRY_KEY=LS0tLS1CRUdJTiBFTkNSWVBURUQgUFJJVkFURSBLRVktLS0tLQpNSUhzTUZjR0NTcUdTSWIzRFFFRkRUQktNQ2tHQ1NxR1NJYjNEUUVGRERBY0JBakJYK1UvdUFkQ3hBSUNDQUF3CkRBWUlLb1pJaHZjTkFna0ZBREFkQmdsZ2hrZ0JaUU1FQVNvRUVHWTNnblRGZ3F0UE5sVU93a2hvSHFrRWdaQlAKMG5FMWpSRXliTHBDNHFtaGczRXdaR2lXZDFWV2RLVEtyNXF3d3hsdjhCbHB1UHhtRGN4dTA1U3VReWhMcU5hWgpVNjRoZlFyYy94cnRnT3Mwc0ZXenlhY0hEaFhiQUdTQjdTTjc2WG55NU9wWDVZVGtRTFMvRTk4YmxFY3NQUWVuCkNqNTJnQzVPZ0JtYzl1cjZlbWY2bjd6TE5vUWovSzk4MEdIWjg5OVZHQ1J3OHhGZGIyb3IyU3dMcDd0V1Ixcz0KLS0tLS1FTkQgRU5DUllQVEVEIFBSSVZBVEUgS0VZLS0tLS0K
+      # set a passphrase for decrypting the registry key
+      - REGISTRY_KEY_PASSPHRASE=fake
+      # Set a URI for accessing the registry
+      - REGISTRY_HOSTNAME=localhost
+      # --- These keys are obtained from `.env` file ---
+      # Set a private JWT signing key for Login.gov
+      - DJANGO_SECRET_LOGIN_KEY
+      # AWS credentials
+      - AWS_ACCESS_KEY_ID
+      - AWS_SECRET_ACCESS_KEY
+      # AWS S3 bucket credentials
+      - AWS_S3_ACCESS_KEY_ID
+      - AWS_S3_SECRET_ACCESS_KEY
+      - AWS_S3_REGION
+      - AWS_S3_BUCKET_NAME
+      # File encryption credentials
+      - SECRET_ENCRYPT_METADATA
+    stdin_open: true
+    tty: true
+    ports:
+      - "8080:8080"
+    # command: "python"
+    command: >
+      bash -c " python manage.py migrate &&
+      python manage.py createcachetable &&
+      python manage.py load &&
+      python manage.py runserver 0.0.0.0:8080"
+
+  db:
+    image: postgres:latest
+    environment:
+      - POSTGRES_DB=app
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=feedabee
+
+  node:
+    build:
+      context: .
+      dockerfile: node.Dockerfile
+    image: node
+    volumes:
+      - .:/app
+    working_dir: /app
+    stdin_open: true
+    tty: true
+    command: ./run_node_watch.sh
+
+  pa11y:
+    build:
+      context: .
+      dockerfile: node.Dockerfile
+    cap_add:
+      - SYS_ADMIN
+    volumes:
+      - .:/app
+      # internal Docker volume that will cover up the host's
+      # node_modules directory inside of the container
+      - /app/node_modules
+    working_dir: /app
+    links:
+      - app
+    profiles:
+      - pa11y
+
+  owasp:
+    image: ghcr.io/zaproxy/zaproxy:stable
+    command: zap-baseline.py -t http://app:8080 -c zap.conf -I -r zap_report.html
+    volumes:
+      - .:/zap/wrk/
+    links: ["app"]
+    profiles: ["owasp-scan"]

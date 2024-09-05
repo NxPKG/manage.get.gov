@@ -1,0 +1,26 @@
+{% extends "domain_base.html" %}
+{% load static field_helpers url_helpers %}
+
+{% block title %}Security email | {{ domain.name }} | {% endblock %}
+
+{% block domain_content %}
+  {% include "includes/form_errors.html" with form=form %}
+
+  <h1>Security email</h1>
+
+  <p>We strongly recommend that you provide a security email. This email will allow the  public to report observed or suspected security issues on your domain. Security emails are made public and included in the <a class="usa-link" rel="noopener noreferrer" target="_blank" href="{% public_site_url 'about/data/' %}">.gov domain data</a> we provide.</p>
+
+  <p>A security contact should be capable of evaluating or triaging security reports for your entire domain. Use a team email address, not an individual’s email. We recommend using an alias, like security@domain.gov.</p>
+
+  <form class="usa-form usa-form--large" method="post" novalidate>
+    {% csrf_token %}
+
+    {% input_with_errors form.security_email %}
+
+    <button
+      type="submit"
+      class="usa-button"
+    >{% if form.security_email.value is None or form.security_email.value == "dotgov@cisa.dhs.gov" or form.security_email.value == "registrar@dotgov.gov"%}Add security email{% else %}Save{% endif %}</button>
+  </form>
+
+{% endblock %}  {# domain_content #}

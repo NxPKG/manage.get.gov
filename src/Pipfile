@@ -1,0 +1,51 @@
+[[source]]
+url = "https://pypi.python.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+django = "4.2.10"
+cfenv = "*"
+django-cors-headers = "*"
+pycryptodomex = "*"
+django-allow-cidr = "*"
+django-auditlog = "*"
+django-csp = "*"
+environs = {extras=["django"]}
+Faker = "*"
+gunicorn = "*"
+oic = "*"
+pyjwkest = "*"
+psycopg2-binary = "*"
+whitenoise = "*"
+django-widget-tweaks = "*"
+cachetools = "*"
+requests = "*"
+django-fsm = "2.8.1"
+django-phonenumber-field = {extras = ["phonenumberslite"], version = "*"}
+boto3 = "*"
+typing-extensions ='*'
+django-login-required-middleware = "*"
+greenlet = "*"
+gevent = "*"
+fred-epplib = {git = "https://github.com/bdcert/epplib.git", ref = "master"}
+pyzipper="*"
+tblib = "*"
+django-admin-multiple-choice-list-filter = "*"
+django-import-export = "*"
+django-waffle = "*"
+
+[dev-packages]
+django-debug-toolbar = "*"
+nplusone = "*"
+bandit = "*"
+black = "*"
+flake8 = "*"
+mypy = "*"
+types-requests = "*"
+django-stubs = "*"
+django-webtest = "*"
+types-cachetools = "*"
+boto3-mocking = "*"
+boto3-stubs = "*"
+django-model2puml = "*"
